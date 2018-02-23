@@ -1,30 +1,33 @@
 import socket
 
+class Server:
+  def __init__(self, family = socket.AF_INET, sockType = socket.SOCK_STREAM):
+    self.__sock = socket.socket(family, sockType)
+    self.__server_address = ('localhost', 10000)
+    self.__clienses = []
+    print('starting up on %s port %s' % self.__server_address)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 10000)
+  def Run(self):
+    self.__sock.bind(self.__server_address)
+    self.__sock.listen(5)
+    try:
+      print('waiting for a client connection')
+      connection, client_address = self.__sock.accept()
 
-print('starting up on %s port %s' % server_address)
+      name = connection.recv(1024).decode("utf-8")
+      print('connection from', name)
+      self.__clienses.append(name)
 
-sock.bind(server_address)
+      while True:
+        print("waiting for the message...")
+        recvmsg = connection.recv(1024).decode("utf-8")
+        if recvmsg == "exit":
+          print("%s closed the session" % name)
+          break
+        print('received message from %s: %s' % (name,recvmsg))
+        
+    except socket.error:
+      print("Error")
+    finally:
+      connection.close()
 
-sock.listen(1)
-try:
-  print('waiting for a client connection')
-  connection, client_address = sock.accept()
-
-  name = connection.recv(1024).decode("utf-8")
-  print('connection from', name)
-
-  recvmsg = ""
-  while recvmsg != "exit":
-    print("waiting for the message...")
-    recvmsg = connection.recv(1024).decode("utf-8")
-    if recvmsg != "exit":
-      print('received message from %s: %s' % (name,recvmsg))
-    else:
-      print("%s closed the session" % name)
-except socket.error:
-  print("Error")
-finally:
-  connection.close()
