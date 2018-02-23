@@ -13,7 +13,8 @@ class CliensApp:
       print("1 - Connect to server")
     else:
       print("1 - Send message")
-      print("2 - disconnect server")
+      print("2 - Read received messages")
+      print("3 - disconnect server")
     print("0 - Close")
 
   def Choose(self, choice):
@@ -27,6 +28,8 @@ class CliensApp:
       message = input("Message: ")
       self.__cliens.SendMessage(message)
     elif self.__cliens.IsConnected() and choice == '2':
+      print(self.__cliens.GetMessages())
+    elif self.__cliens.IsConnected() and choice == '3':
       self.__cliens.DisConnectServer()
     else:
       print("No appropriate option")

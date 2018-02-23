@@ -13,6 +13,6 @@ class Main:
       if not self.__cliensApp.Choose(choice):
         break
 
-
-main = Main()
-main.StartApp()
+if __name__ == '__main__':
+  main = Main()
+  main.StartApp()

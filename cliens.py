@@ -1,10 +1,12 @@
 import socket, time, initializecliens
+import threading
 
 
 class Cliens:
   def __init__(self, name, family = socket.AF_INET, typeOfSock = socket.SOCK_STREAM):
     self.sock = socket.socket(family, typeOfSock)
     self.initializeCliens = initializecliens.InitializeCliens(name)
+    self.__messages = ""
 
   def SendName(self):
     self.sock.sendall(self.initializeCliens.GetName().encode())
@@ -15,6 +17,9 @@ class Cliens:
       self.sock.connect(server_address)
       self.SendName()
       self.initializeCliens.ChangeConnected(True)
+
+      proc = threading.Thread(target=self.WaitForMessage)
+      proc.start()
     except socket.error:
       print('ERROR')
       self.initializeCliens.ChangeConnected(False)
@@ -23,6 +28,19 @@ class Cliens:
     print('cliens sending the message: %s' % message)
     self.sock.sendall(message.encode())
     print("Message sent")
+
+  def WaitForMessage(self):
+    while True:
+      try:
+        recvmsg = self.sock.recv(1014).decode("utf-8")
+        self.__messages += (recvmsg + '\n')
+      except socket.error:
+        break
+
+  def GetMessages(self):
+    msg = self.__messages
+    self.__messages = ""
+    return msg
 
   def DisConnectServer(self):
     print("Disconnect")

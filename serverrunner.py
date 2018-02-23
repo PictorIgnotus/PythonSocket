@@ -1,5 +1,7 @@
 import server
+from multiprocessing import pool
 
-mainServer = server.Server()
+if __name__ == '__main__':
+  mainServer = server.Server()
 
-mainServer.Run()
+  mainServer.Run()
