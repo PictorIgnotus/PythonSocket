@@ -1,69 +1,35 @@
-import socket, time
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-connected = False
-
-name = input("Your name: ")
-server_address = ('localhost', 10000)
+import socket, time, initializecliens
 
 
-def ConnectToServer():
-  print('connecting to %s port %s' % server_address)
-  try:
-    sock.connect(server_address)
-    SendName()
-    return True
-  except socket.error:
-    print('ERROR')
-    return False
+class Cliens:
+  def __init__(self, name, family = socket.AF_INET, typeOfSock = socket.SOCK_STREAM):
+    self.sock = socket.socket(family, typeOfSock)
+    self.initializeCliens = initializecliens.InitializeCliens(name)
 
-def SendName():
-  sock.sendall(name.encode())
+  def SendName(self):
+    self.sock.sendall(self.initializeCliens.GetName().encode())
 
-def SendMessage():
-  message = input("Message: ")
-  print('cliens sending the message: %s' % message)
-  sock.sendall(message.encode())
-  print("Send message")
+  def ConnectToServer(self, server_address):
+    print('connecting to %s port %s' % server_address)
+    try:
+      self.sock.connect(server_address)
+      self.SendName()
+      self.initializeCliens.ChangeConnected(True)
+    except socket.error:
+      print('ERROR')
+      self.initializeCliens.ChangeConnected(False)
 
-def  DisConnectServer():
-  print("Disconnect")
-  sock.sendall("exit".encode())
-  sock.close()
+  def SendMessage(self, message): 
+    print('cliens sending the message: %s' % message)
+    self.sock.sendall(message.encode())
+    print("Message sent")
 
-def Choice(x):
-  x = str(x)
-  global connected
-  if not connected and x == '1':
-    connected = ConnectToServer()
-  elif connected and x == '1':
-    SendMessage()
-  elif connected and x == '2':
-    DisConnectServer()
-    
-def PrintMenu():
-  if not connected:
-    print("1 - Connect to server")
-  else:
-    print("1 - Send message")
-    print("2 - disconnect server")
-  print("0 - Close")
+  def DisConnectServer(self):
+    print("Disconnect")
+    self.sock.sendall("exit".encode())
+    self.sock.close()
+    self.initializeCliens.ChangeConnected(False)
 
-x = 1
-
-
-
-
-while str(x) != '0':
-  PrintMenu()
-  x = input("Choice[1-3]: ")
-  Choice(x)
-
-print("Close socket")
-try:
-  sock.close()
-  print("Succeed to close")
-except socket.error:
-  print("Failed to close")
+  def IsConnected(self):
+    return self.initializeCliens.IsConnected()
 
