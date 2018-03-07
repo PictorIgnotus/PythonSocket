@@ -41,10 +41,11 @@ edit_area = Tkinter.Text(root, width=80, height=2, wrap="word",
 edit_area.pack()
 
 def GetText(event):
-  if connected:
-    content = edit_area.get("1.0", "end")
+  content = edit_area.get("1.0", "end")
+  content = content.strip()
+  if connected and content != "":
     message_area.config(state="normal")
-    message_area.insert("end","You: " + content)
+    message_area.insert("end","You: " + content + "\n")
     message_area.config(state="disabled")
     message_area.see("end")
     edit_area.delete("1.0", "end")
