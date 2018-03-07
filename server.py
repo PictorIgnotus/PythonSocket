@@ -18,9 +18,9 @@ class Server:
           print("%s closed the session" % name)
           break
         print('received message from %s: %s' % (name,recvmsg))
+        msg = name + ": " + recvmsg
         for i in self.__clienses:
           if name != i[0]:
-            msg = i[0] + ": " + recvmsg
             i[1].sendall(msg.encode())
       return True
     except (socket.error, v):

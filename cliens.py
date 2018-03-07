@@ -3,9 +3,10 @@ import threading
 
 
 class Cliens:
-  def __init__(self, name, family = socket.AF_INET, typeOfSock = socket.SOCK_STREAM):
+  def __init__(self, name, root = None, family = socket.AF_INET, typeOfSock = socket.SOCK_STREAM):
     self.sock = socket.socket(family, typeOfSock)
     self.initializeCliens = initializecliens.InitializeCliens(name)
+    self.root = root
     self.__messages = ""
 
   def SendName(self):
@@ -34,6 +35,8 @@ class Cliens:
       try:
         recvmsg = self.sock.recv(1014).decode("utf-8")
         self.__messages += (recvmsg + '\n')
+        if self.root != None:
+          self.root.event_generate("<<SentMessage>>", when="tail")
       except socket.error:
         break
 
